@@ -9,7 +9,6 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE,
                       fig.width=6, fig.height=4, out.width = "100%")
-library(tidyverse)
 ```
 
 ```{css}
@@ -69,6 +68,7 @@ The data was collected via an observational survey where participants recorded t
 Each submission captures the amount consumed, perceived thirst and environmental conditions at the time of the observation. The goal is to understand patterns in water intake and identify key factors that affect hydration behaviour.
 
 ```{r include=FALSE}
+library(tidyverse)
 
 logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vT7Ei4Z4JJvaZLsHuqcYsvymgKPFKHdxElqiKDeH7ZNFCTwzdbB2YWSDpmE5BFXuJSx0lyraGFZUtly/pub?gid=139541697&single=true&output=csv")
 
@@ -119,7 +119,6 @@ median_quantity <- median(latest_data$quantity_ml) %>%
 
 mean_thirst <- mean(latest_data$thirst_level) %>%
   round(1)
-
 ```
 
 In total, **`r num_observations`** water or beverage intake records were logged during the survey. These observations came from **`r num_respondents`** participants, each submitting an average of **`r avg_response`** observations. \
@@ -128,7 +127,7 @@ The median reported water intake was **`r median_quantity`** ml, with the maximu
 
 ### Observations by Age Group, Time of Day and Temperature
 
-```{r, echo= F}
+```{r}
 age_group_plot <- latest_data %>%
   ggplot() +
     geom_bar(aes(x = age_group), 
@@ -141,7 +140,7 @@ age_group_plot <- latest_data %>%
 age_group_plot
 ```
 
-```{r, echo= F}
+```{r}
 hour_plot <- latest_data %>%
   ggplot() +
   geom_bar(aes(x = hour), 
@@ -154,7 +153,7 @@ hour_plot <- latest_data %>%
 hour_plot
 ```
 
-```{r, echo= F}
+```{r}
 temperature_plot <- latest_data %>%
   ggplot() +
   geom_bar(aes(x = temperature), 
