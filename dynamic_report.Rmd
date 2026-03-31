@@ -1,0 +1,177 @@
+---
+title: My dynamic report
+output: html_fragment
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE,
+                      fig.width=6, fig.height=4, out.width = "100%")
+library(tidyverse)
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=Oldenburg&display=swap');
+
+body {
+  background-color: #F5F5F5;
+  font-family: 'Oldenburg', sans-serif;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  font-size: 3em;
+  text-align: center;
+  margin-bottom: 1em;
+  max-width: 50%;
+  min-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h3 {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 1em;
+  max-width: 50%;
+  min-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+}
+
+p {
+  max-width: 50%;
+  min-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 18px;
+  text-align: left;
+  line-height: 1.6; 
+  border-bottom: 3px solid #A7C7E7;
+  border-right: 3px solid #A7C7E7;
+}
+
+strong {
+  color: #4A90E2; 
+}
+```
+
+## Hydration Patterns and Environmental Influences
+
+This report explores hydration behaviour across different individual and
+the environmental factors associated. We analyse how factors such as
+age, time of day, temperature, humidity, physical activity and beverage
+type influence water intake. </br></br> The data was collected via an
+observational survey where participants recorded their water/beverage
+consumption at various points during the day. </br></br> Each submission
+captures the amount consumed, perceived thirst and environmental
+conditions at the time of the observation. The goal is to understand
+patterns in water intake and identify key factors that affect hydration
+behaviour.
+
+```{r include=FALSE}
+
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vT7Ei4Z4JJvaZLsHuqcYsvymgKPFKHdxElqiKDeH7ZNFCTwzdbB2YWSDpmE5BFXuJSx0lyraGFZUtly/pub?gid=139541697&single=true&output=csv")
+
+latest_data <- logged_data %>%
+  rename(timestamp = 1,
+         first_time = 2,
+         age_group = 3,
+         hour = 4,
+         humidity = 5,
+         physical_activity = 6,
+         quantity_ml = 7,
+         is_water = 8,
+         temperature = 9,
+         thirst_level = 10)
+
+latest_data$is_water <- ifelse(
+  latest_data$is_water == "Yes", "Water", "Non-water drink")
+
+latest_data$first_time <- factor(latest_data$first_time)
+latest_data$age_group <- factor(latest_data$age_group)
+latest_data$hour <- factor(latest_data$hour)
+latest_data$humidity <- factor(latest_data$humidity)
+latest_data$physical_activity <- factor(latest_data$physical_activity)
+latest_data$is_water <- factor(latest_data$is_water)
+latest_data$temperature <- factor(latest_data$temperature)
+
+latest_data$age_group <- factor(latest_data$age_group, 
+                                  levels = c("Under 18", "18-25", "26-40", 
+                                             "40+"), 
+                                  ordered = TRUE)
+
+latest_data$temperature <- factor(latest_data$temperature, 
+                                  levels = c("Very cold", "Cold", "Comfortable", 
+                                             "Warm", "Hot", "Very hot"), 
+                                  ordered = TRUE)
+
+num_observations <- length(latest_data$timestamp)
+
+num_respondents <- sum(latest_data$first_time == "Yes")
+
+avg_response <- num_observations / num_respondents %>%
+  round(1)
+
+max_quantity <- max(latest_data$quantity_ml)
+
+median_quantity <- median(latest_data$quantity_ml) %>%
+  round(2)
+
+mean_thirst <- mean(latest_data$thirst_level) %>%
+  round(1)
+
+```
+
+In total, **`r num_observations`** water or beverage intake records were
+logged during the survey. These observations came from
+**`r num_respondents`** participants, each submitting an average of
+**`r avg_response`** observations. </br></br> The median reported water
+intake was **`r median_quantity`** ml, with the maximum intake being
+**`r max_quantity`** ml. On average, participants rated their thirst as
+**`r mean_thirst`** on a 1 (very hydrated) to 5 (very dehydrated) scale.
+
+### Observations by Age Group, Time of Day and Temperature
+
+```{r, echo= F}
+age_group_plot <- latest_data %>%
+  ggplot() +
+    geom_bar(aes(x = age_group), 
+             fill = "#CDB4DB") +
+  theme_minimal() +
+  labs(title = "Observations by Age Group",
+       x = "Age Group",
+       y = "Number of Drinking Events")
+
+age_group_plot
+```
+
+```{r, echo= F}
+hour_plot <- latest_data %>%
+  ggplot() +
+  geom_bar(aes(x = hour), 
+           fill = "#A7C7E7") +
+  theme_minimal() +
+  labs(title = "Observations by Time of Day",
+       x = "Time of Day",
+       y = "Number of Drinking Events")
+
+hour_plot
+```
+
+```{r, echo= F}
+temperature_plot <- latest_data %>%
+  ggplot() +
+  geom_bar(aes(x = temperature), 
+           fill = "#78DAAE") +
+  theme_minimal() +
+  labs(title = "Observations by Perceived Temperature",
+       x = "Perceived Temperature",
+       y = "Number of Drinking Events")
+
+temperature_plot
+```
