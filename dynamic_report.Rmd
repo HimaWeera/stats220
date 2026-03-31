@@ -109,7 +109,7 @@ num_observations <- length(latest_data$timestamp)
 
 num_respondents <- sum(latest_data$first_time == "Yes")
 
-avg_response <- num_observations / num_respondents %>%
+avg_response <- (num_observations / num_respondents) %>%
   round(1)
 
 max_quantity <- max(latest_data$quantity_ml)
