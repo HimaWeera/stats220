@@ -171,7 +171,7 @@ temperature_plot
 ```{r, out.width="49%"}
 age_physical_intake <- latest_data %>% 
   group_by(age_group, physical_activity) %>% 
-  summarise(mean_qty_age_phy = mean(quantity_ml), .groups = "drop") %>% 
+  summarise(mean_qty_age_phy = mean(quantity_ml)) %>% 
   ggplot() + 
   geom_col(aes(x = age_group, y = mean_qty_age_phy, 
                fill = physical_activity), position = "dodge") + 
